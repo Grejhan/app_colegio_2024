@@ -68,3 +68,16 @@ class CursoControlador(APIView):
                     'message':'Error al actualizar el curso',
                     'content': serializador.errors
                 }, status=status.HTTP_400_BAD_REQUEST)
+    def delete(self,request, id):
+            curso_encontrado = Curso.objects.filter(id = id).first()
+            if not curso_encontrado:
+                return Response(data={
+                    'message':'No se encontro el curso'
+                }, status=status.HTTP_404_NOT_FOUND)
+            
+            Curso.objects.filter(id = id).delete()
+
+            return Response(data={
+                'message':'El curso se elimino exitosamente'
+            }, status=status.HTTP_204_NO_CONTENT)
+        
