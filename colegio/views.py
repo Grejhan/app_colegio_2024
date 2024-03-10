@@ -30,10 +30,41 @@ class CursosContorl(APIView):
             serializador.save()
             return Response(data={
                 'message':'Curso creado exitosamentre',
-                'content': ''
+                'content': serializador.data
             }, status=status.HTTP_201_CREATED )
         else:
             return Response(data={
                 'menssage':'Error al crear el curso',
                 'content': serializador.errors
             }, status=status.HTTP_400_BAD_REQUEST)
+
+class CursoControlador(APIView):
+    def get(self, request, id):
+            curso_encontrado = Curso.objects.filter(id = id).first()
+            if not curso_encontrado:
+                return Response(data={
+                    'message':'No se encontro el curso'
+                }, status=status.HTTP_404_NOT_FOUND)
+            serializador = CursoSerializer(instance=curso_encontrado)
+            return Response(data={
+                    'content': serializador.data
+                })
+    def put(self, request, id):
+            curso_encontrado = Curso.objects.filter(id = id).first()
+            if not curso_encontrado:
+                return Response(data={
+                    'message':'No se encontro el curso'
+                }, status=status.HTTP_404_NOT_FOUND)
+            serializador = CursoSerializer(data = request.data)
+            if serializador.is_valid():
+                respuesta =  serializador.update(instance=curso_encontrado, validated_data=serializador.validated_data)
+                print(respuesta)
+                return Response (data={
+                    'message':'El curso se actualizo corectamente'
+                })
+
+            else :
+                return Response(data={
+                    'message':'Error al actualizar el curso',
+                    'content': serializador.errors
+                }, status=status.HTTP_400_BAD_REQUEST)
