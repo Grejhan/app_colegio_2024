@@ -20,6 +20,7 @@ class Curso(models.Model):
 
     class Meta:
         db_table = 'cursos'
+
         
 
 class Calificacion(models.Model):

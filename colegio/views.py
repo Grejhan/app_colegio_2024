@@ -95,3 +95,18 @@ class CalificacionsControler(APIView):
                 'message':'Error al guardar la calificacion',
                 'content': serializador.errors
             }, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(http_method_names=['GET'])
+def listadosDeNotas(request, id):
+    calificacion_encontrada=Calificacion.objects.filter(usuarioId = id).all()
+    if not calificacion_encontrada:
+        return Response({
+            'message':'No se encontro la calificacion',
+            
+        })
+    else:
+        serializador = CalificacionSerializer(instance=calificacion_encontrada, many=True)
+
+        return Response({
+            'content': serializador.data
+        })
