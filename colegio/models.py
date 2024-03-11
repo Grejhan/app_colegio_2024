@@ -16,10 +16,11 @@ class Curso(models.Model):
     nombreCurso = models.CharField(max_length=100, null=False)
     creditos = models.IntegerField()
     seccion = models.CharField(max_length=10)
-    usuario = models.ForeignKey(to=Usuario, db_column='usuario_id', on_delete=models.CASCADE)
+    usuarioId = models.ForeignKey(to=Usuario, db_column='usuario_id', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'cursos'
+        
 
 class Calificacion(models.Model):
     id = models.AutoField(primary_key=True, null=False)
@@ -27,18 +28,19 @@ class Calificacion(models.Model):
     pc2 = models.FloatField()
     pc3 = models.FloatField()
     examenFinal = models.FloatField()
-    curso = models.ForeignKey(to=Curso, db_column='curso_id', on_delete=models.CASCADE)
-    usuario = models.ForeignKey(to=Usuario, db_column='calificaciones_usuarios', on_delete=models.RESTRICT)
+    cursoId = models.ForeignKey(to=Curso, db_column='curso_id', on_delete=models.CASCADE)
+    usuarioId = models.ForeignKey(to=Usuario, db_column='calificaciones_usuarios', on_delete=models.RESTRICT)
 
     class Meta:
         db_table = 'calificaciones'
+        
 
 
 class Horario(models.Model):
     id = models.AutoField(primary_key=True, null=False)
     horaIngreso = models.TimeField()
     horaSalida = models.TimeField()
-    curso = models.OneToOneField(to=Curso, db_column='curso_id', on_delete=models.CASCADE)
+    cursoId = models.OneToOneField(to=Curso, db_column='curso_id', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'horarios'

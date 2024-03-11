@@ -1,8 +1,8 @@
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Curso, Usuario
-from .serializers import CursoSerializer
+from .models import Curso, Usuario, Calificacion
+from .serializers import CursoSerializer, CalificacionSerializer
 from rest_framework import status
 
 
@@ -81,3 +81,17 @@ class CursoControlador(APIView):
                 'message':'El curso se elimino exitosamente'
             }, status=status.HTTP_204_NO_CONTENT)
         
+class CalificacionsControler(APIView):
+    def post(self,request):
+        serializador = CalificacionSerializer(data = request.data)
+        if serializador.is_valid():
+            serializador.save()
+            return Response({
+                'message':'Calificacion agregada exitosamente',
+                'content':serializador.data    
+            }, status=status.HTTP_201_CREATED)
+        else:
+            return Response({
+                'message':'Error al guardar la calificacion',
+                'content': serializador.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
