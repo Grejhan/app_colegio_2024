@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from .models import Curso, Usuario, Calificacion
 from .serializers import CursoSerializer, CalificacionSerializer
 from rest_framework import status
+from django.db.models import Avg
 
 
 
@@ -84,6 +85,7 @@ class CursoControlador(APIView):
 class CalificacionsControler(APIView):
     def post(self,request):
         serializador = CalificacionSerializer(data = request.data)
+        
         if serializador.is_valid():
             serializador.save()
             return Response({
@@ -110,3 +112,35 @@ def listadosDeNotas(request, id):
         return Response({
             'content': serializador.data
         })
+
+@api_view(http_method_names=['GET'])
+def estadoDeAlumnos(request, id):
+    # Obtener el ID del curso desde los parámetros de la URL
+    curso_id = id
+    
+    # Filtrar las calificaciones para el curso dado
+    notas = Calificacion.objects.filter(cursoId=curso_id).all()
+    
+    # Verificar si hay calificaciones para el curso dado
+    if notas.exists():
+        # Calcular el promedio de pc1, pc2, pc3 y examenFinal
+        promedio_notas = notas.aggregate(
+            promedio=(Avg('pc1') + Avg('pc2') + Avg('pc3') + Avg('examenFinal')) / 4
+        )['promedio']
+        
+        # Determinar el estado del alumno según el promedio
+        if promedio_notas >= 12:  # Cambié el umbral a 12 según tu criterio
+            estado = 'Aprobado'
+        else:
+            estado = 'Reprobado'
+            
+        return Response({
+            'message': f'El alumno está {estado}',
+            'promedio': promedio_notas
+        })
+    else:
+        # No se encontraron calificaciones para el curso dado
+        return Response({
+            'message': 'No se encontraron calificaciones para este curso.'
+    })
+            
