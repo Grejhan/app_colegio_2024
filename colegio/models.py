@@ -1,49 +1,63 @@
 from django.db import models
 
-class Usuario(models.Model):
-    id = models.AutoField(primary_key=True, null=False)
-    nombre = models.CharField(max_length=50, null=False)
-    apellido = models.CharField(max_length=50)
-    correo = models.EmailField(unique=True, null=False)
-    password = models.CharField(max_length=100, null=False)
-    foto = models.ImageField()
+class Docente (models.Model):
+    id = models.AutoField(primary_key=True, unique=True, null=False)
+    nombre = models.TextField(null=False)
+    apellido = models.TextField(null=False)
+    correo = models.TextField(null=False)
+    password = models.EmailField(unique=True, null=False)
+    especializacion = models.TextField(null=False)
+    telefono = models.TextField(null=False)
+    foto = models.TextField(null=False)
 
     class Meta:
-        db_table = 'usuarios'
+        db_table = 'docentes'
 
-class Curso(models.Model):
-    id = models.AutoField(primary_key=True, null=False)
-    nombreCurso = models.CharField(max_length=100, null=False)
-    creditos = models.IntegerField()
-    seccion = models.CharField(max_length=10)
-    usuarioId = models.ForeignKey(to=Usuario, db_column='usuario_id', on_delete=models.CASCADE)
+class Estudiante (models.Model):
+    id = models.AutoField(primary_key=True, unique=True, null=False)
+    nombre = models.TextField(null=False) 
+    apellido = models.TextField(null=False)
+    correo = models.EmailField(unique=True, null=False)
+    password = models.TextField(null=False)
+    foto = models.TextField(null=False)
+
+    class Meta:
+        db_table = 'estudiantes'
+
+class Curso (models.Model):
+    id = models.AutoField(primary_key=True, unique=True, null=False)
+    nombre = models.TextField(null=False)
+    seccion = models.TextField(null=False)
+    hInicio = models.TimeField(db_column='h_inicio',null=False)
+    hFinal = models.TimeField(db_column='h_final', null=False)
+
+    docenteId = models.ForeignKey(to=Docente, db_column='docente_id',on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'cursos'
 
-        
-
-class Calificacion(models.Model):
-    id = models.AutoField(primary_key=True, null=False)
-    pc1 = models.FloatField()
-    pc2 = models.FloatField()
-    pc3 = models.FloatField()
-    examenFinal = models.FloatField()
+class CursoEstudiante (models.Model):
+    id = models.AutoField(primary_key=True, unique=True, null=False)
     cursoId = models.ForeignKey(to=Curso, db_column='curso_id', on_delete=models.CASCADE)
-    usuarioId = models.ForeignKey(to=Usuario, db_column='calificaciones_usuarios', on_delete=models.RESTRICT)
+    estudianteId = models.ForeignKey(to=Estudiante, db_column='estudiante_id', on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'curso_estudiante'
+
+class Calificacion (models.Model):
+    id = models.AutoField(primary_key=True, unique=True, null=False)
+    pc1 = models.FloatField(null=False)
+    pc2 = models.FloatField(null=False)
+    pc3 = models.FloatField(null=False)
+    examenFinal = models.FloatField(db_column='examen_final' ,null=False)
+    promedio = models.FloatField(null=False)
+    cursoId = models.ForeignKey(to=Curso, db_column='curso_id', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'calificaciones'
-        
 
 
-class Horario(models.Model):
-    id = models.AutoField(primary_key=True, null=False)
-    horaIngreso = models.TimeField()
-    horaSalida = models.TimeField()
-    cursoId = models.OneToOneField(to=Curso, db_column='curso_id', on_delete=models.CASCADE)
 
-    class Meta:
-        db_table = 'horarios'
+
 
         

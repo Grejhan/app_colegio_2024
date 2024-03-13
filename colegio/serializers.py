@@ -1,18 +1,26 @@
 from rest_framework import serializers
-from .models import Calificacion,Curso,Horario,Usuario
+from .models import *
 
 
+class DocenteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Docente
+
+        fields = '__all__'
+
+
+class EstudianteSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = '__all__'
 class CursoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Curso
 
         fields = '__all__'
 
-
-class UsuarioSerializer(serializers.ModelSerializer):
+class CursoEstudianteSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Usuario
-
+        model = '__all__'
         fields = '__all__'
 
 class CalificacionSerializer(serializers.ModelSerializer):
@@ -21,10 +29,9 @@ class CalificacionSerializer(serializers.ModelSerializer):
 
         fields = '__all__'
 
+
+
+
         
 
-class HorarioSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Horario
-
-        fields = '__all__'                
+                
