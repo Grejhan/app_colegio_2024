@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'app_colegio.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'colegio_db',
+        'NAME': 'colegio_bd',
         'PASSWORD':'root',
         'USER':'postgres',
         'HOST':'localhost',

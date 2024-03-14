@@ -4,11 +4,11 @@ class Docente (models.Model):
     id = models.AutoField(primary_key=True, unique=True, null=False)
     nombre = models.TextField(null=False)
     apellido = models.TextField(null=False)
-    correo = models.TextField(null=False)
-    password = models.EmailField(unique=True, null=False)
+    correo = models.EmailField(unique=True,null=False)
+    password = models.TextField(null=False)
     especializacion = models.TextField(null=False)
     telefono = models.TextField(null=False)
-    foto = models.TextField(null=False)
+    foto = models.ImageField(null=False)
 
     class Meta:
         db_table = 'docentes'
@@ -50,7 +50,7 @@ class Calificacion (models.Model):
     pc2 = models.FloatField(null=False)
     pc3 = models.FloatField(null=False)
     examenFinal = models.FloatField(db_column='examen_final' ,null=False)
-    promedio = models.FloatField(null=False)
+    promedioFinal = models.FloatField(null=False)
     cursoId = models.ForeignKey(to=Curso, db_column='curso_id', on_delete=models.CASCADE)
 
     class Meta:
