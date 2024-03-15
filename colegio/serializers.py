@@ -6,7 +6,7 @@ class DocenteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Docente
 
-        fields = '__all__'
+        exclude = ['correo']
 
 
 class EstudianteSerializer(serializers.ModelSerializer):
