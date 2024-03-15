@@ -37,34 +37,13 @@ class DocenteRegistro(APIView):
                 'content':serializador.errors
             })
         
-@api_view(http_method_names=['PUT','DELETE'])       
-def ControlDocente(self, request,id):
-        docente_encontrado=Docente.objects.filter(id=id).first()
-        if docente_encontrado:
-            return Response(data={
-                'message':'El docente no existe'
-            })
-        
-        serializador = DocenteSerializer(data=request.data)
-        if serializador.is_valid():
-            actualizador =serializador.update(instance=docente_encontrado,
-                                            validated_data=serializador.validated_data)
-            return Response(data={
-                'message':'Docente actualizado exitosamente'
-            })
-        else:
-            return Response(data={
-                'message':'error al actualizar docente',
-                'content':serializador.erros
-            })
-        
-def delete(self,request,id):
-        docente_encontrado = Docente.objects.filter(id = id).first()
+class DocenteControler(APIView):
+    def get(self, request, id):
+
+        docente_encontrado = Docente.objects.filter(id=id).first()
         if not docente_encontrado:
             return Response(data={
-                'message':'El docente no existe'
+                'message':'El docente no existe',
             })
-        Docente.objects.filter(id = id).delete()
-        return Response(data={
-            'message':'El docente se elimino exitosamente'
-        })
+        serializador = DocenteSerializer
+        

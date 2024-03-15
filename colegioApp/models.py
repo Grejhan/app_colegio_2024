@@ -19,7 +19,7 @@ class Estudiante (models.Model):
     apellido = models.TextField(null=False)
     correo = models.EmailField(unique=True, null=False)
     password = models.TextField(null=False)
-    foto = models.TextField(null=False)
+    foto = models.ImageField(null=False)
 
     class Meta:
         db_table = 'estudiantes'
@@ -50,7 +50,7 @@ class Calificacion (models.Model):
     pc2 = models.FloatField(null=False)
     pc3 = models.FloatField(null=False)
     examenFinal = models.FloatField(db_column='examen_final' ,null=False)
-    promedioFinal = models.FloatField(null=False)
+    promedio = models.FloatField(null=False)
     cursoId = models.ForeignKey(to=Curso, db_column='curso_id', on_delete=models.CASCADE)
 
     class Meta:
