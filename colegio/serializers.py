@@ -12,6 +12,7 @@ class DocenteSerializer(serializers.ModelSerializer):
 class EstudianteSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
+        
 class CursoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Curso
@@ -20,7 +21,7 @@ class CursoSerializer(serializers.ModelSerializer):
 
 class CursoEstudianteSerializer(serializers.ModelSerializer):
     class Meta:
-        model = '__all__'
+        model = CursoEstudiante
         fields = '__all__'
 
 class CalificacionSerializer(serializers.ModelSerializer):

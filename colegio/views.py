@@ -44,6 +44,18 @@ class DocenteControler(APIView):
         if not docente_encontrado:
             return Response(data={
                 'message':'El docente no existe',
+                
+
             })
-        serializador = DocenteSerializer
+        serializador = DocenteSerializer(data=request.data)
+        if serializador.is_valid():
+            resultado = DocenteSerializer.update(instance=docente_encontrado, validated_data=serializador.validated_data)
+            return Response(data={
+                'message':'El docente se actualizo exitosamente'
+            })
+        else:
+            return Response (data={
+                'message':'Error al actualizar el Docente',
+                'content': serializador.errors
+            })
         
