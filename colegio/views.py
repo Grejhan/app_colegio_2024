@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from .models import *
 from .serializers import*
 from rest_framework import status
+from django.contrib.auth.hashers import make_password, check_password
+from os import remove
 
 
 
@@ -22,11 +24,12 @@ class DocenteRegistro(APIView):
         })
     def post(self, request):
         print(request.data)
+        hasheo = make_password(request.data.get('password'))
+        request.data['password'] = hasheo
         serializador = DocenteSerializer(data=request.data)
         validacion = serializador.is_valid()
         if validacion:
             serializador.save()
-            
             return Response(data={
                 'message':'Docente Creado Exitosamente',
                 'content': serializador.data
@@ -51,20 +54,26 @@ class DocenteControler(APIView):
             return Response(data={
                 'message':'Docente encontrado',
                 'content': serializador.data
-                })
+            })
+    
     def put(self, request, id):
+        hasheo = make_password(request.data.get('password'))
+        request.data['password'] = hasheo
         docente_encontrado = Docente.objects.filter(id=id).first()
         if not docente_encontrado:
             return Response(data={
                 'message':'El docente no existe',
             }, status=status.HTTP_404_NOT_FOUND)
-        
+        imagen_anterior= docente_encontrado.foto.path
 
         serializador= DocenteSerializer(data=request.data)
 
         if serializador.is_valid():
-            resultado = serializador.update(instance=docente_encontrado, validated_data=serializador.validated_data)
-            return Response(data={
+            serializador.update(instance=docente_encontrado, 
+                                validated_data=serializador.validated_data)
+            
+            remove(imagen_anterior)
+            return Response(data ={
                 'message': 'Docente actualizado exitosamente',
                 'content': serializador.data
             })
@@ -74,16 +83,18 @@ class DocenteControler(APIView):
                 'content': serializador.errors
             }, status=status.HTTP_400_BAD_REQUEST)
         
-    def delete (self,request,id):
-        docente_encontardo = Docente.objects.filter(id=id).first()
-        if not docente_encontardo:
+    def delete(self, request, id):
+        docente_encontrado = Docente.objects.filter(id=id).first()
+        if not docente_encontrado:
             return Response(data={
-                'message':'El docente no exixte'
-            })
+                'message': 'El docente no existe'
+            }, status=status.HTTP_404_NOT_FOUND)
+        imagen_anterior= docente_encontrado.foto.path        
         Docente.objects.filter(id=id).delete()
+        remove(imagen_anterior)
         return Response(data={
-            'message':'Docente eliminado exitosamente'
-        })
+            'message':'El docente se elimino exitosamente'
+        }, status=status.HTTP_204_NO_CONTENT)
 
 
 

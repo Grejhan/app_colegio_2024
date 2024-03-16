@@ -4,7 +4,7 @@ class Docente (models.Model):
     id = models.AutoField(primary_key=True, unique=True, null=False)
     nombre = models.TextField(null=False)
     apellido = models.TextField(null=False)
-    correo = models.EmailField(unique=True,null=False)
+    correo = models.EmailField(null=False)
     password = models.TextField(null=False)
     especializacion = models.TextField(null=False)
     telefono = models.TextField(null=False)
@@ -17,7 +17,7 @@ class Estudiante (models.Model):
     id = models.AutoField(primary_key=True, unique=True, null=False)
     nombre = models.TextField(null=False) 
     apellido = models.TextField(null=False)
-    correo = models.EmailField(unique=True, null=False)
+    correo = models.EmailField( null=False)
     password = models.TextField(null=False)
     foto = models.ImageField(null=False)
 
