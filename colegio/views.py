@@ -96,6 +96,64 @@ class DocenteControler(APIView):
             'message':'El docente se elimino exitosamente'
         }, status=status.HTTP_204_NO_CONTENT)
 
+class CrearCurso(APIView):
+    def post(self, request):
 
+        serializador = CursoSerializer(data=request.data)
+        if serializador.is_valid():
+            serializador.save()
+            return Response({
+                'message': 'Curso agregado Exitosamente',
+                'content': serializador.data
+
+            }, status=status.HTTP_201_CREATED)  
+        else:
+            return Response({
+                'message':'Error al guardar el curso',
+                'content': serializador.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+class ListarCursosDocente(APIView):
+    def get(self,resquest, id):
+
+        curso_encontrado=Curso.objects.filter(docenteId=id).all()
+        if not curso_encontrado:
+            return Response({
+                'message':'El docente no tiene cursos'
+            })
+        else:
+            serializador = CursoSerializer(instance=curso_encontrado, many=True)
+            return Response({
+                'contet':serializador.data
+            })
+
+@api_view(http_method_names=['GET','POST','PUT'])
+def ListarCalificaciones(request,id):
+    calificacion_curso = Calificacion.objects.filter(cursoId=id).all()
+    if not calificacion_curso:
+        return Response({                                                            # en lista las calificaciones por cursoId = id
+            'message':'El curso no tiene calificaicones',
+            
+        })
+    else:
+        serializador = CalificacionSerializer(instance=calificacion_curso, many=True)
+        return Response({
+            'content':serializador.data
+        })
+    
+class CalificarCursos(APIView):
+    def post(self,request,id):
+        serializador = CalificacionSerializer(data=request.data)
+        if serializador.is_valid():
+            serializador.save()
+            return Response({
+                'message':'calificaciones agregadas exitosamente',
+                'content':serializador.data
+            })
+        else:
+            return Response({
+                'message':'Error al guardar calificaciones',
+                'content':serializador.errors
+            })
 
 
