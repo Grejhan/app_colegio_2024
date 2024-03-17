@@ -1,5 +1,11 @@
 from django.urls import path
-from .views import  DocenteRegistro,DocenteControler,CrearCurso,ListarCursosDocente,ListarCalificaciones,CalificarCursos
+from .views import ( DocenteRegistro,
+                    DocenteControler,
+                    CrearCurso,
+                    ListarCursosDocente,
+                    ListarCalificaciones,
+                    CalificarCursos, 
+                    EstudianteRegistro)
 
 
 urlpatterns = [
@@ -8,5 +14,6 @@ urlpatterns = [
     path('cursos/', view=CrearCurso.as_view()),
     path('cursos/<int:id>/docente/', view=ListarCursosDocente.as_view()),
     path('calificar/curso/<int:id>/', view=ListarCalificaciones),
-    path('agregar-calificacion/curso/<int:id>/', view=CalificarCursos.as_view())
+    path('agregar-calificacion/curso/<int:id>/', view=CalificarCursos.as_view()),
+    path('estudiante/', view=EstudianteRegistro.as_view())
 ] 

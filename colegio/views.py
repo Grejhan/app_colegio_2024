@@ -156,4 +156,30 @@ class CalificarCursos(APIView):
                 'content':serializador.errors
             })
 
-
+class EstudianteRegistro(APIView):
+        
+    def post(sefl, request):
+        hasheo = make_password(request.data.get('password'))
+        request.data['password'] = hasheo
+        serializador = EstudianteSerializer(data=request.data)
+        validacion=serializador.is_valid()
+        serializador.save()
+        if validacion:
+            return Response(data={
+                'message':'Estudiante creado exitosamente',
+                'content': serializador.data
+            })
+        else:
+            return Response(data={
+                'message':'Error al crear estudiante',
+                'content':serializador.errors
+            })
+        
+    def get(self, request):
+        estudiante_encontrado = Estudiante.objects.all()
+        serializador = EstudianteSerializer(instance=estudiante_encontrado, many=True)
+        if estudiante_encontrado:
+            return Response(data={
+                'mensage':'el estudiante si existe',
+                'content': serializador.data
+            })
