@@ -41,6 +41,5 @@ class PromedioCalificacionCursos(serializers.ModelSerializer):
     models=Curso
     fields = '__all__'
 
-        
 
                 

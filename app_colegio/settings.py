@@ -132,3 +132,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_ROOT = BASE_DIR/ 'archivos'
 
 MEDIA_URL = '/'
+
+SWAGGER_SETTINGS = {
+    'DEFAULT_MODEL_RENDERING':'example'
+}

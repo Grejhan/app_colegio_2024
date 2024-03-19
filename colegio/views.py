@@ -6,6 +6,8 @@ from .serializers import*
 from rest_framework import status
 from django.contrib.auth.hashers import make_password, check_password
 from os import remove
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 
@@ -22,6 +24,11 @@ class DocenteRegistro(APIView):
             'message':'Informacion del Docente',
             'content': serializador.data
         })
+
+    @swagger_auto_schema(
+        request_body=DocenteSerializer,  
+        responses={200: "Respuesta exitosa", 400: "Solicitud incorrecta"}  
+    )
     def post(self, request):
         print(request.data)
         hasheo = make_password(request.data.get('password'))
@@ -55,7 +62,10 @@ class DocenteControler(APIView):
                 'message':'Docente encontrado',
                 'content': serializador.data
             })
-    
+    @swagger_auto_schema(
+        request_body=EstudianteSerializer,  
+        responses={200: "Actualización exitosa", 400: "Solicitud incorrecta", 404: "No encontrado"}
+    )
     def put(self, request, id):
         hasheo = make_password(request.data.get('password'))
         request.data['password'] = hasheo
@@ -97,6 +107,10 @@ class DocenteControler(APIView):
         }, status=status.HTTP_204_NO_CONTENT)
 
 class CrearCurso(APIView):
+    @swagger_auto_schema(
+        request_body=CursoSerializer,  
+        responses={200: "Respuesta exitosa", 400: "Solicitud incorrecta"}  
+    )
     def post(self, request):
 
         serializador = CursoSerializer(data=request.data)
@@ -127,11 +141,11 @@ class ListarCursosDocente(APIView):
                 'contet':serializador.data
             })
 
-@api_view(http_method_names=['GET','POST','PUT'])
+@api_view(http_method_names=['GET','PUT'])
 def ListarCalificaciones(request,id):
     calificacion_curso = Calificacion.objects.filter(cursoId=id).all()
     if not calificacion_curso:
-        return Response({                                                            # en lista las calificaciones por cursoId = id
+        return Response({                                                           
             'message':'El curso no tiene calificaicones',
             
         })
@@ -142,6 +156,10 @@ def ListarCalificaciones(request,id):
         })
     
 class CalificarCursos(APIView):
+    @swagger_auto_schema(
+        request_body=CalificacionSerializer,  
+        responses={200: "Respuesta exitosa", 400: "Solicitud incorrecta"}  
+    )
     def post(self,request,id):
         serializador = CalificacionSerializer(data=request.data)
         if serializador.is_valid():
@@ -157,14 +175,18 @@ class CalificarCursos(APIView):
             })
 
 class EstudianteRegistro(APIView):
-        
+    @swagger_auto_schema(
+        request_body=EstudianteSerializer,  
+        responses={200: "Respuesta exitosa", 400: "Solicitud incorrecta"}  
+    )   
     def post(sefl, request):
         hasheo = make_password(request.data.get('password'))
         request.data['password'] = hasheo
         serializador = EstudianteSerializer(data=request.data)
         validacion=serializador.is_valid()
-        serializador.save()
+        
         if validacion:
+            serializador.save()
             return Response(data={
                 'message':'Estudiante creado exitosamente',
                 'content': serializador.data
@@ -198,3 +220,33 @@ class EstudianteControler(APIView):
                 'content': serializador.data
             })
         
+    @swagger_auto_schema(
+        request_body=EstudianteSerializer,  
+        responses={200: "Actualización exitosa", 400: "Solicitud incorrecta", 404: "No encontrado"}
+    )    
+    def put(self, request, id):
+        hasheo = make_password(request.data.get('password'))
+        request.data['password'] = hasheo
+        alumno_encontrado = Estudiante.objects.filter(id=id).first()
+        if not alumno_encontrado:
+            return Response(data={
+                'message':'El estudiante no existe',
+            }, status=status.HTTP_404_NOT_FOUND)
+        imagen_anterior= alumno_encontrado.foto.path
+
+        serializador= EstudianteSerializer(data=request.data)
+
+        if serializador.is_valid():
+            serializador.update(instance=alumno_encontrado, 
+                                validated_data=serializador.validated_data)
+            
+            remove(imagen_anterior)
+            return Response(data ={
+                'message': 'El estudiante se actualizo exitosamente',
+                'content': serializador.data
+            })
+        else:
+            return Response(data={
+                'message': 'Error al actualizar el Estudiante',
+                'content': serializador.errors
+            }, status=status.HTTP_400_BAD_REQUEST)    
