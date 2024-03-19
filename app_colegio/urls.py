@@ -18,8 +18,21 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings # importa todas las variables 
+from drf_yasg.views import get_schema_view # genera mi vista para poder acceder a la documentacion
+from drf_yasg import openapi # es la  herramienta que usa swagger por detras
 
+swagger_view=get_schema_view(
+    openapi.Info(
+        title='APi de Colegio',
+        default_version='v1',
+        description='Api para registrar informacion de un colegio ',
+        contact=openapi.Contact(name='Victor fernandez', email='manuel1508vc@gmail.com')
+
+), 
+public=True,
+)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('colegio/', include('colegio.urls')),
+    path('documentacion/', swagger_view.with_ui('swagger', cache_timeout=0))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) # agregamos las rutas del proyecto con todas sus rutas declaradas en media_root (archivos)

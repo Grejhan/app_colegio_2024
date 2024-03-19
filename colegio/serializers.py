@@ -34,7 +34,12 @@ class CalificacionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class PromedioCalificacionCursos(serializers.ModelSerializer):
+    calificacion = CalificacionSerializer(many=True)
+    docente = DocenteSerializer(many=True)                             #agrege  nuevo serializador para intentar promediar calificaciones 
 
+    models=Curso
+    fields = '__all__'
 
         
 

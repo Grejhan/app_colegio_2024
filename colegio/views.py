@@ -183,29 +183,18 @@ class EstudianteRegistro(APIView):
                 'mensage':'el estudiante si existe',
                 'content': serializador.data
             })
-    def put(self, request, id):
-        hasheo = make_password(request.data.get('password'))
-        request.data['password'] = hasheo
-        alumno_encontrado = Estudiante.objects.filter(id=id).first()
-        if not alumno_encontrado:
+
+class EstudianteControler(APIView):
+    def get(self,request,id):
+        estudiante_encontrado=Estudiante.objects.filter(id=id).first()
+        if not estudiante_encontrado:
             return Response(data={
-                'message':'El estudiante no existe',
-            }, status=status.HTTP_404_NOT_FOUND)
-        imagen_anterior= alumno_encontrado.foto.path
-
-        serializador= EstudianteSerializer(data=request.data)
-
-        if serializador.is_valid():
-            serializador.update(instance=alumno_encontrado, 
-                                validated_data=serializador.validated_data)
-            
-            remove(imagen_anterior)
-            return Response(data ={
-                'message': 'El estudiante se actualizo exitosamente',
-                'content': serializador.data
+            'message':'El estudiante no existe'
             })
         else:
+            serializador = EstudianteSerializer(instance=estudiante_encontrado)
             return Response(data={
-                'message': 'Error al actualizar el Estudiante',
-                'content': serializador.errors
-            }, status=status.HTTP_400_BAD_REQUEST)
+                'message':'estudiante encontrado',
+                'content': serializador.data
+            })
+        
