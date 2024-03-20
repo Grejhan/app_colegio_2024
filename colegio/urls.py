@@ -16,7 +16,7 @@ urlpatterns = [
     path('agregar-calificaciones/curso/<int:id>/', view=CalificarCursos.as_view()),
     path('estudiantes/', view=EstudianteRegistro.as_view()),
     path('estudiante/<int:id>/', view=EstudianteControler.as_view()),
-    path('listar-calificaciones/<int:id>/', view=ListarCalificaciones.as_view())
+    path('listar-calificaciones/', view=ListarCalificaciones.as_view())
     
 ]
     

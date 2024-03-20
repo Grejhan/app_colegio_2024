@@ -31,7 +31,7 @@ class CalificacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Calificacion
 
-        fields = '__all__'
+        fields = ['pc1', 'pc2', 'pc3', 'examenFinal', 'promedio']
 
 
 class PromedioCalificacionCursos(serializers.ModelSerializer):
@@ -39,7 +39,7 @@ class PromedioCalificacionCursos(serializers.ModelSerializer):
     
     class Meta:                         
         model=Curso
-        fields = '__all__'
+        fields = ['id', 'nombre', 'seccion', 'hInicio', 'hFinal', 'calificaciones']
 
 
                 
