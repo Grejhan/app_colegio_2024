@@ -1,4 +1,3 @@
-from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import *
@@ -11,11 +10,7 @@ from drf_yasg import openapi
 
 
 
-@api_view(http_method_names=['GET','POST'])
-def rutaInicial(request):
-    return Response({
-        'message':'Bienvendo al Api Colegio'
-    })
+
 class DocenteRegistro(APIView):
     def get(self, request):
         respuesta = Docente.objects.all()
@@ -126,34 +121,32 @@ class CrearCurso(APIView):
                 'message':'Error al guardar el curso',
                 'content': serializador.errors
             }, status=status.HTTP_400_BAD_REQUEST)
-
-class ListarCursosDocente(APIView):
-    def get(self,resquest, id):
-
-        curso_encontrado=Curso.objects.filter(docenteId=id).all()
-        if not curso_encontrado:
+        
+    def get(self, request):
+        listar_cursos = Curso.objects.all()
+        if not listar_cursos:
             return Response({
-                'message':'El docente no tiene cursos'
+                'message':'Los cursos no existen'
             })
         else:
-            serializador = CursoSerializer(instance=curso_encontrado, many=True)
+            serializador = CursoSerializer(instance=listar_cursos, many=True)
             return Response({
-                'contet':serializador.data
+                'content': serializador.data
             })
 
-@api_view(http_method_names=['GET','PUT'])
-def ListarCalificaciones(request,id):
-    calificacion_curso = Calificacion.objects.filter(cursoId=id).all()
-    if not calificacion_curso:
-        return Response({                                                           
-            'message':'El curso no tiene calificaicones',
-            
-        })
-    else:
-        serializador = CalificacionSerializer(instance=calificacion_curso, many=True)
-        return Response({
-            'content':serializador.data
-        })
+class ListarCalificaciones(APIView):
+    def get (request,id):
+        calificacion_curso = Calificacion.objects.all()
+        if not calificacion_curso:
+            return Response({                                                           
+                'message':'El curso no tiene calificaicones',
+                
+            })
+        else:
+            serializador = CalificacionSerializer(instance=calificacion_curso, many=True)
+            return Response({
+                'content':serializador.data
+            })
     
 class CalificarCursos(APIView):
     @swagger_auto_schema(
