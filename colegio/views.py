@@ -136,7 +136,7 @@ class CrearCurso(APIView):
 
 class ListarCalificaciones(APIView):
     def get (self,request):
-        calificacion_curso = Curso.objects.all()
+        calificacion_curso = Calificacion.objects.all()
         
         serializador = PromedioCalificacionCursos(instance=calificacion_curso, many=True)
         return Response(data={
@@ -263,4 +263,12 @@ class AgregarAlumnoCurso(APIView):
             return Response (data={
                 'message':'Error al agregar al estudiante al curso',
                 'content': serializador.errors
+            })
+    def get(self, request):
+        estudiante_curso = CursoEstudiante.objects.all()
+        serializador = CursoEstudianteSerializer(instance=estudiante_curso, many=True)
+        
+        if estudiante_curso:
+            return Response(data={
+                'content': serializador.data
             })

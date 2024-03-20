@@ -31,15 +31,15 @@ class CalificacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Calificacion
 
-        fields = ['pc1', 'pc2', 'pc3', 'examenFinal', 'promedio']
+        fields = '__all__'
 
 
 class PromedioCalificacionCursos(serializers.ModelSerializer):
-    calificaciones = CalificacionSerializer(many=True)
+    cursoId= CursoSerializer()
     
     class Meta:                         
-        model=Curso
-        fields = ['id', 'nombre', 'seccion', 'hInicio', 'hFinal', 'calificaciones']
+        model= Calificacion
+        fields = '__all__'
 
 
                 

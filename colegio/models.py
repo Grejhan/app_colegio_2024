@@ -40,7 +40,8 @@ class CursoEstudiante (models.Model):
     id = models.AutoField(primary_key=True, unique=True, null=False)
     cursoId = models.ForeignKey(to=Curso, db_column='curso_id', on_delete=models.CASCADE)
     estudianteId = models.ForeignKey(to=Estudiante, db_column='estudiante_id', on_delete=models.CASCADE)
-    
+
+
     class Meta:
         db_table = 'curso_estudiante'
 
@@ -51,7 +52,7 @@ class Calificacion (models.Model):
     pc3 = models.FloatField(null=False)
     examenFinal = models.FloatField(db_column='examen_final' ,null=False)
     promedio = models.FloatField(null=False)
-    cursoId = models.ForeignKey(to=Curso, db_column='curso_id', on_delete=models.CASCADE)
+    cursoId = models.ForeignKey(to=Curso, db_column='curso_id', on_delete=models.CASCADE, related_name = 'curso')
 
     class Meta:
         db_table = 'calificaciones'
