@@ -135,16 +135,16 @@ class CrearCurso(APIView):
             })
 
 class ListarCalificaciones(APIView):
-    def get (request,id):
-        calificacion_curso = Calificacion.objects.all()
+    def get (self,request, id):
+        calificacion_curso = Curso.objects.filter(id=id).first()
         if not calificacion_curso:
-            return Response({                                                           
+            return Response(data={                                                           
                 'message':'El curso no tiene calificaicones',
                 
             })
-        else:
-            serializador = CalificacionSerializer(instance=calificacion_curso, many=True)
-            return Response({
+        
+        serializador = PromedioCalificacionCursos(instance=calificacion_curso)
+        return Response(data={
                 'content':serializador.data
             })
     
