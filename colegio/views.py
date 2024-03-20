@@ -195,7 +195,8 @@ class EstudianteRegistro(APIView):
                 'content': serializador.data
             })
 
-class EstudianteControler(APIView):
+class EstudianteControler(APIView):  
+
     def get(self,request,id):
         estudiante_encontrado=Estudiante.objects.filter(id=id).first()
         if not estudiante_encontrado:
@@ -238,4 +239,28 @@ class EstudianteControler(APIView):
             return Response(data={
                 'message': 'Error al actualizar el Estudiante',
                 'content': serializador.errors
-            }, status=status.HTTP_400_BAD_REQUEST)    
+            }, status=status.HTTP_400_BAD_REQUEST)   
+
+
+
+class AgregarAlumnoCurso(APIView):
+
+    @swagger_auto_schema(
+        request_body=CursoEstudianteSerializer,  
+        responses={200: "Respuesta exitosa", 400: "Solicitud incorrecta"}  
+    )
+    def post(self, request):
+        serializador = CursoEstudianteSerializer(data=request.data)
+        validacion = serializador.is_valid()
+
+        if validacion:
+            serializador.save()
+            return Response(data={
+                'message':'Estudiante agregado al curso exitosamente',
+                'content': serializador.data
+            })
+        else:
+            return Response (data={
+                'message':'Error al agregar al estudiante al curso',
+                'content': serializador.errors
+            })
