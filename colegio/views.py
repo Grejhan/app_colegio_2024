@@ -3,10 +3,11 @@ from rest_framework.response import Response
 from .models import *
 from .serializers import*
 from rest_framework import status
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import make_password
 from os import remove
 from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
+from django.db.models import Avg, F
+
 
 
 
@@ -141,7 +142,7 @@ class ListarCalificaciones(APIView):
         serializador = PromedioCalificacionCursos(instance=calificacion_curso, many=True)
         return Response(data={
                 'content':serializador.data
-            })
+        })
     
     
 class CalificarCursos(APIView):
@@ -162,6 +163,9 @@ class CalificarCursos(APIView):
                 'message':'Error al guardar calificaciones',
                 'content':serializador.errors
             })
+    
+
+        
 
 class EstudianteRegistro(APIView):
     @swagger_auto_schema(
@@ -272,3 +276,24 @@ class AgregarAlumnoCurso(APIView):
             return Response(data={
                 'content': serializador.data
             })
+        
+
+class PromedioFinal(APIView):
+    def get(self, request, id):
+        
+        calificaciones_curso = Calificacion.objects.filter(cursoId=id)
+
+        promedio_final = calificaciones_curso.aggregate(
+            promedio_final=(Avg(F('pc1')) * 0.2 + Avg(F('pc2')) * 0.2 + Avg(F('pc3')) * 0.2 + Avg(F('examenFinal')) * 0.4)
+        )['promedio_final']
+
+        puntaje_minimo = 12
+
+        estado_alumno = 'Aprobado' if promedio_final >= puntaje_minimo else 'Reprobado'
+
+        return Response(data={
+            'message': 'El promedio final es',
+            'content': promedio_final,
+            'estado': estado_alumno
+        })
+

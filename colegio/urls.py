@@ -7,6 +7,7 @@ from .views import ( DocenteRegistro,
                     EstudianteControler,
                     ListarCalificaciones,
                     AgregarAlumnoCurso,
+                    PromedioFinal,
                     )
 
 
@@ -18,7 +19,7 @@ urlpatterns = [
     path('estudiantes/', view=EstudianteRegistro.as_view()),
     path('estudiante/<int:id>/', view=EstudianteControler.as_view()),
     path('listar-calificaciones/', view=ListarCalificaciones.as_view()),
-    path('alumno-curso/', view=AgregarAlumnoCurso.as_view())
+    path('alumno-curso/', view=AgregarAlumnoCurso.as_view()),
+    path('promedio-final/<int:id>/', view=PromedioFinal.as_view())
     
 ]
-    

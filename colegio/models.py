@@ -51,7 +51,6 @@ class Calificacion (models.Model):
     pc2 = models.FloatField(null=False)
     pc3 = models.FloatField(null=False)
     examenFinal = models.FloatField(db_column='examen_final' ,null=False)
-    promedio = models.FloatField(null=False)
     cursoId = models.ForeignKey(to=Curso, db_column='curso_id', on_delete=models.CASCADE, related_name = 'curso')
 
     class Meta:

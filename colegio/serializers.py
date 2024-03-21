@@ -35,11 +35,9 @@ class CalificacionSerializer(serializers.ModelSerializer):
 
 
 class PromedioCalificacionCursos(serializers.ModelSerializer):
-    cursoId= CursoSerializer()
-    
+    cursoId = CursoSerializer()
     class Meta:                         
         model= Calificacion
         fields = '__all__'
-
 
                 
