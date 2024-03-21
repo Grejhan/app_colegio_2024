@@ -9,6 +9,7 @@ from .views import ( DocenteRegistro,
                     AgregarAlumnoCurso,
                     PromedioFinal,
                     )
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 urlpatterns = [
@@ -20,6 +21,6 @@ urlpatterns = [
     path('estudiante/<int:id>/', view=EstudianteControler.as_view()),
     path('listar-calificaciones/', view=ListarCalificaciones.as_view()),
     path('alumno-curso/', view=AgregarAlumnoCurso.as_view()),
-    path('promedio-final/<int:id>/', view=PromedioFinal.as_view())
-    
+    path('promedio-final/<int:id>/', view=PromedioFinal.as_view()),
+    path('login/', view=TokenObtainPairView.as_view())
 ]

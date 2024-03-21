@@ -6,7 +6,20 @@ class DocenteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Docente
 
-        fields = '__all__'
+        exclude = ['groups', 'user_permissions', 'last_login']
+        # https://www.django-rest-framework.org/api-guide/serializers/#additional-keyword-arguments
+        # podemos indicar que atributos o columnas de la tabla son solo escritura o solo lectura
+        extra_kwargs = {
+            'password': {
+                'write_only': True
+            },
+            'is_staff': {
+                'read_only': True
+            },
+            'is_active': {
+                'write_only': True
+            }
+        }
 
 
 class EstudianteSerializer(serializers.ModelSerializer):

@@ -7,12 +7,12 @@ from django.contrib.auth.hashers import make_password
 from os import remove
 from drf_yasg.utils import swagger_auto_schema
 from django.db.models import Avg, F
-
-
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 
 
 
 class DocenteRegistro(APIView):
+    permission_classes=[IsAdminUser]
     def get(self, request):
         respuesta = Docente.objects.all()
         serializador = DocenteSerializer(instance=respuesta, many=True)
@@ -21,30 +21,34 @@ class DocenteRegistro(APIView):
             'content': serializador.data
         })
 
-    @swagger_auto_schema(
-        request_body=DocenteSerializer,  
-        responses={200: "Respuesta exitosa", 400: "Solicitud incorrecta"}  
-    )
+
     def post(self, request):
-        print(request.data)
-        hasheo = make_password(request.data.get('password'))
-        request.data['password'] = hasheo
+        permission_classes=[IsAdminUser]
         serializador = DocenteSerializer(data=request.data)
         validacion = serializador.is_valid()
         if validacion:
-            serializador.save()
+            nuevo_docente = Docente(nombre=serializador.validated_data.get('nombre'),
+                                    apellido = serializador.validated_data.get('apellido'),
+                                    correo = serializador.validated_data.get('correo'),
+                                    especializacion = serializador.validated_data.get('especializacion'),
+                                    telefono = serializador.validated_data.get('telefono'),
+                                    foto = serializador.validated_data.get('foto'))
+            
+            nuevo_docente.set_password(serializador.validated_data.get('password'))
+            nuevo_docente.save()
             return Response(data={
                 'message':'Docente Creado Exitosamente',
                 'content': serializador.data
                 
-            })
+            }, status=status.HTTP_201_CREATED)
         else:
             return Response(data={
                 'message':'Error al crear al Docente',
                 'content':serializador.errors
-            })
+            }, status=status.HTTP_400_BAD_REQUEST)
         
 class DocenteControler(APIView):
+
     def get(self, request, id):
 
         docente_encontrado = Docente.objects.filter(id=id).first()
@@ -58,10 +62,7 @@ class DocenteControler(APIView):
                 'message':'Docente encontrado',
                 'content': serializador.data
             })
-    @swagger_auto_schema(
-        request_body=EstudianteSerializer,  
-        responses={200: "Actualización exitosa", 400: "Solicitud incorrecta", 404: "No encontrado"}
-    )
+    
     def put(self, request, id):
         hasheo = make_password(request.data.get('password'))
         request.data['password'] = hasheo
@@ -103,10 +104,7 @@ class DocenteControler(APIView):
         }, status=status.HTTP_204_NO_CONTENT)
 
 class CrearCurso(APIView):
-    @swagger_auto_schema(
-        request_body=CursoSerializer,  
-        responses={200: "Respuesta exitosa", 400: "Solicitud incorrecta"}  
-    )
+    
     def post(self, request):
 
         serializador = CursoSerializer(data=request.data)
@@ -146,10 +144,7 @@ class ListarCalificaciones(APIView):
     
     
 class CalificarCursos(APIView):
-    @swagger_auto_schema(
-        request_body=CalificacionSerializer,  
-        responses={200: "Respuesta exitosa", 400: "Solicitud incorrecta"}  
-    )
+    permission_classes=[IsAdminUser]
     def post(self,request,id):
         serializador = CalificacionSerializer(data=request.data)
         if serializador.is_valid():
@@ -169,9 +164,9 @@ class CalificarCursos(APIView):
 
 class EstudianteRegistro(APIView):
     @swagger_auto_schema(
-        request_body=EstudianteSerializer,  
+        request_body=CursoSerializer,  
         responses={200: "Respuesta exitosa", 400: "Solicitud incorrecta"}  
-    )   
+    )
     def post(sefl, request):
         hasheo = make_password(request.data.get('password'))
         request.data['password'] = hasheo
@@ -214,10 +209,7 @@ class EstudianteControler(APIView):
                 'content': serializador.data
             })
         
-    @swagger_auto_schema(
-        request_body=EstudianteSerializer,  
-        responses={200: "Actualización exitosa", 400: "Solicitud incorrecta", 404: "No encontrado"}
-    )    
+    
     def put(self, request, id):
         hasheo = make_password(request.data.get('password'))
         request.data['password'] = hasheo
@@ -249,10 +241,7 @@ class EstudianteControler(APIView):
 
 class AgregarAlumnoCurso(APIView):
 
-    @swagger_auto_schema(
-        request_body=CursoEstudianteSerializer,  
-        responses={200: "Respuesta exitosa", 400: "Solicitud incorrecta"}  
-    )
+
     def post(self, request):
         serializador = CursoEstudianteSerializer(data=request.data)
         validacion = serializador.is_valid()
@@ -296,4 +285,6 @@ class PromedioFinal(APIView):
             'content': promedio_final,
             'estado': estado_alumno
         })
+    
+
 
