@@ -82,13 +82,13 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'colegio_db',
-        'PASSWORD':'root',
-        'USER':'postgres',
-        'HOST':'localhost',
+        'PASSWORD':'uekKKfI3CnmYaQknP2if4PkrLSXTXScl',
+        'USER':'colegio_db_user',
+        'HOST':'dpg-cnv0n37109ks73bl3peg-a.oregon-postgres.render.com',
         'PORT':'5432'
     }
 }
-
+#postgres://colegio_db_user:uekKKfI3CnmYaQknP2if4PkrLSXTXScl@dpg-cnv0n37109ks73bl3peg-a.oregon-postgres.render.com/colegio_db
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
