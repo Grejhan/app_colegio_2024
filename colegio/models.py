@@ -7,7 +7,7 @@ class ManejadorUsuario(BaseUserManager):
             raise ValueError('El usuario tiene que tener un correo')
 
         
-        
+
         correo_normalizado = self.normalize_email(correo)
 
         nuevo_usuario = self.model(correo=correo_normalizado, nombre=nombre)
@@ -96,4 +96,3 @@ class Calificacion(models.Model):
 
 
 
-        

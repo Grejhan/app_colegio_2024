@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated, IsAuthentic
 
 
 class DocenteRegistro(APIView):
-    permission_classes=[IsAdminUser]
+    
     def get(self, request):
         respuesta = Docente.objects.all()
         serializador = DocenteSerializer(instance=respuesta, many=True)
@@ -21,9 +21,12 @@ class DocenteRegistro(APIView):
             'content': serializador.data
         })
 
-
+    @swagger_auto_schema(
+        request_body=DocenteSerializer,  
+        responses={200: "Respuesta exitosa", 400: "Solicitud incorrecta"}  
+    )
     def post(self, request):
-        permission_classes=[IsAdminUser]
+        
         serializador = DocenteSerializer(data=request.data)
         validacion = serializador.is_valid()
         if validacion:
@@ -63,7 +66,12 @@ class DocenteControler(APIView):
                 'content': serializador.data
             })
     
+    @swagger_auto_schema(
+        request_body=DocenteSerializer,  
+        responses={200: "Respuesta exitosa", 400: "Solicitud incorrecta"}  
+    )
     def put(self, request, id):
+        
         hasheo = make_password(request.data.get('password'))
         request.data['password'] = hasheo
         docente_encontrado = Docente.objects.filter(id=id).first()
@@ -83,28 +91,32 @@ class DocenteControler(APIView):
             return Response(data ={
                 'message': 'Docente actualizado exitosamente',
                 'content': serializador.data
-            })
+            }, status=status.HTTP_201_CREATED)
         else:
             return Response(data={
                 'message': 'Error al actualizar al Docente',
                 'content': serializador.errors
             }, status=status.HTTP_400_BAD_REQUEST)
         
-    def delete(self, request, id):
+    def delete(self, request,id):
         docente_encontrado = Docente.objects.filter(id=id).first()
         if not docente_encontrado:
             return Response(data={
-                'message': 'El docente no existe'
-            }, status=status.HTTP_404_NOT_FOUND)
-        imagen_anterior= docente_encontrado.foto.path        
+                'message':'El docente no existe'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        imagen_anterior= docente_encontrado.foto.path
         Docente.objects.filter(id=id).delete()
         remove(imagen_anterior)
-        return Response(data={
-            'message':'El docente se elimino exitosamente'
-        }, status=status.HTTP_204_NO_CONTENT)
+        return Response(data=None, status=status.HTTP_204_NO_CONTENT)
+
+
+
 
 class CrearCurso(APIView):
-    
+    @swagger_auto_schema(
+        request_body=CursoSerializer,  
+        responses={200: "Respuesta exitosa", 400: "Solicitud incorrecta"}  
+    )
     def post(self, request):
 
         serializador = CursoSerializer(data=request.data)
@@ -145,6 +157,10 @@ class ListarCalificaciones(APIView):
     
 class CalificarCursos(APIView):
     permission_classes=[IsAdminUser]
+    @swagger_auto_schema(
+        request_body=CalificacionSerializer,  
+        responses={200: "Respuesta exitosa", 400: "Solicitud incorrecta"}  
+    )
     def post(self,request,id):
         serializador = CalificacionSerializer(data=request.data)
         if serializador.is_valid():
@@ -152,19 +168,19 @@ class CalificarCursos(APIView):
             return Response({
                 'message':'calificaciones agregadas exitosamente',
                 'content':serializador.data
-            })
+            }, status=status.HTTP_201_CREATED)
         else:
             return Response({
                 'message':'Error al guardar calificaciones',
                 'content':serializador.errors
-            })
+            }, status=status.HTTP_400_BAD_REQUEST)
     
 
         
 
 class EstudianteRegistro(APIView):
     @swagger_auto_schema(
-        request_body=CursoSerializer,  
+        request_body=EstudianteSerializer,  
         responses={200: "Respuesta exitosa", 400: "Solicitud incorrecta"}  
     )
     def post(sefl, request):
@@ -193,6 +209,10 @@ class EstudianteRegistro(APIView):
                 'mensage':'el estudiante si existe',
                 'content': serializador.data
             })
+        else:
+            return Response(data={
+                'message':'No se encontraron los estudiantes'
+            })
 
 class EstudianteControler(APIView):  
 
@@ -210,6 +230,10 @@ class EstudianteControler(APIView):
             })
         
     
+    @swagger_auto_schema(
+        request_body=EstudianteSerializer,  
+        responses={200: "Respuesta exitosa", 400: "Solicitud incorrecta"}  
+    )
     def put(self, request, id):
         hasheo = make_password(request.data.get('password'))
         request.data['password'] = hasheo
@@ -230,7 +254,7 @@ class EstudianteControler(APIView):
             return Response(data ={
                 'message': 'El estudiante se actualizo exitosamente',
                 'content': serializador.data
-            })
+            }, status=status.HTTP_201_CREATED)
         else:
             return Response(data={
                 'message': 'Error al actualizar el Estudiante',
@@ -240,8 +264,10 @@ class EstudianteControler(APIView):
 
 
 class AgregarAlumnoCurso(APIView):
-
-
+    @swagger_auto_schema(
+        request_body=CursoEstudianteSerializer,  
+        responses={200: "Respuesta exitosa", 400: "Solicitud incorrecta"}  
+    )
     def post(self, request):
         serializador = CursoEstudianteSerializer(data=request.data)
         validacion = serializador.is_valid()
@@ -256,15 +282,21 @@ class AgregarAlumnoCurso(APIView):
             return Response (data={
                 'message':'Error al agregar al estudiante al curso',
                 'content': serializador.errors
-            })
+            }, status=status.HTTP_201_CREATED)
     def get(self, request):
         estudiante_curso = CursoEstudiante.objects.all()
         serializador = CursoEstudianteSerializer(instance=estudiante_curso, many=True)
         
         if estudiante_curso:
             return Response(data={
+                'menssage':'El estudiante si existe',
                 'content': serializador.data
             })
+        else:
+            return Response (data={
+                'message':'No se entontaron estudiantes registrados a los cursos'
+            })
+
         
 
 class PromedioFinal(APIView):
